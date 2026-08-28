@@ -33,6 +33,9 @@ class App:
         self.canvas_disque = tk.Canvas(self.frame_disque, width=300, height=20, bg="white")
         self.canvas_disque.pack()
 
+        self.label_80_cpu = tk.Label(self.frame_cpu)
+        self.label_80_cpu.pack()
+
         self.rafraichir()
         self.fenetre.mainloop()
 
@@ -52,6 +55,12 @@ class App:
             couleur_cpu = "orange"
         else:
             couleur_cpu = "red"
+
+        if cpu >= 80:
+            self.label_80_cpu.config(text="Avertissement 80%", fg="red")
+        else:
+            self.label_80_cpu.config(text="")
+        
         self.canvas_cpu.create_rectangle(0, 0, largeur_cpu, 20, fill=couleur_cpu, outline="")
 
         # Mettre à jour RAM
