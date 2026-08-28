@@ -9,6 +9,13 @@ class App:
         self.fenetre.title("Monitoring système")
         self.fenetre.resizable(False, False)
 
+        self.fenetre_cpu = tk.Toplevel(self.fenetre)
+        self.fenetre_cpu.title("Monitoring CPU")
+        self.label_cpu_grand = tk.Label(self.fenetre_cpu, text="0%", font=("Arial", 72, "bold"))
+        self.label_cpu_grand.pack(padx=20, pady=20)
+
+
+
         # --- CPU ---
         self.frame_cpu = tk.LabelFrame(self.fenetre, text="CPU", padx=10, pady=10)
         self.frame_cpu.pack(fill=tk.X, padx=10, pady=5)
@@ -63,6 +70,8 @@ class App:
             self.label_80_cpu.config(text="Avertissement 80 % !", fg="red")
         else:
             self.label_80_cpu.config(text="", fg="black")
+
+        self.label_cpu_grand.config(text=f"{cpu:.1f}%")
             
 
         self.canvas_cpu.create_rectangle(0, 0, largeur_cpu, 20, fill=couleur_cpu, outline="")
