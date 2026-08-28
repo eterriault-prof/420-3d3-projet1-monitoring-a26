@@ -9,6 +9,11 @@ class App:
         self.fenetre.title("Monitoring système")
         self.fenetre.resizable(False, False)
 
+        self.fenetre_cpu = tk.Toplevel(self.fenetre)
+        self.fenetre_cpu.title("CPU")
+        self.label_cpu_grand = tk.Label(self.fenetre_cpu, text="0%", font=("Arial", 72, "bold"))
+        self.label_cpu_grand.pack(padx=20, pady=20)
+
         # --- CPU ---
         self.frame_cpu = tk.LabelFrame(self.fenetre, text="CPU", padx=10, pady=10)
         self.frame_cpu.pack(fill=tk.X, padx=10, pady=5)
@@ -16,6 +21,11 @@ class App:
         self.label_cpu.pack()
         self.canvas_cpu = tk.Canvas(self.frame_cpu, width=300, height=20, bg="white")
         self.canvas_cpu.pack()
+
+        
+        self.label_80_cpu = tk.Label(self.frame_cpu, text="")
+        
+
 
         # --- RAM ---
         self.frame_ram = tk.LabelFrame(self.fenetre, text="RAM", padx=10, pady=10)
@@ -37,6 +47,7 @@ class App:
         self.fenetre.mainloop()
 
     def rafraichir(self):
+        
         # Lire les métriques
         cpu = psutil.cpu_percent(interval=None)
         ram = psutil.virtual_memory().percent
@@ -53,6 +64,18 @@ class App:
         else:
             couleur_cpu = "red"
         self.canvas_cpu.create_rectangle(0, 0, largeur_cpu, 20, fill=couleur_cpu, outline="")
+
+        if cpu >= 80:
+            self.label_80_cpu.config(text="80% AAHHVERTISSEMENT!!!", font=("Arial", 12, "bold"), fg="red")
+            self.label_80_cpu.pack()
+
+        else:
+            self.label_80_cpu.config(text="")
+
+
+        self.label_cpu_grand.config(text=f"{cpu:.1f}%")
+        
+        
 
         # Mettre à jour RAM
         self.label_ram.config(text=f"{ram:.1f}%")
@@ -88,6 +111,15 @@ class App:
         )
         with open("monitoring.log", 'a') as f:
             f.write(ligne)
+
+        
+        #syurcharge
+        for _ in range(10_000_000):
+            _ * _
+            
+                        
+            
+                
 
         self.fenetre.after(2000, self.rafraichir)
 
