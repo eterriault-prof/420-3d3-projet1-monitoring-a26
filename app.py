@@ -38,11 +38,38 @@ class App:
         self.canvas_disque = tk.Canvas(self.frame_disque, width=300, height=20, bg="white")
         self.canvas_disque.pack()
 
+        self.log_visible = False
+        self.monitoring_actif = True
+        self.after_id = None
+        self.bouton_log = tk.Button(self.fenetre, text="Afficher le log", command=self.toggle_log)
+        self.bouton_log.pack()
+
         self.label_80_cpu = tk.Label(self.frame_cpu)
         self.label_80_cpu.pack()
 
-        self.rafraichir()
+        self.demarrer_monitoring()
         self.fenetre.mainloop()
+
+    def demarrer_monitoring(self):
+        if self.monitoring_actif and self.after_id is None:
+            self.after_id = self.fenetre.after(2000, self.rafraichir)
+
+    def arreter_monitoring(self):
+        if self.after_id is not None:
+            self.fenetre.after_cancel(self.after_id)
+            self.after_id = None
+
+    def toggle_log(self):
+        self.log_visible = not self.log_visible
+
+        if self.log_visible:
+            self.bouton_log.config(text="Afficher le log")
+            self.monitoring_actif = False
+            self.arreter_monitoring()
+        else:
+            self.bouton_log.config(text="Masquer le log")
+            self.monitoring_actif = True
+            self.demarrer_monitoring()
 
     def rafraichir(self):
         # Lire les métriques
@@ -102,12 +129,15 @@ class App:
             f"RAM: {ram:.1f}% | "
             f"Disque: {disque:.1f}%\n"
         )
-        with open("monitoring.log", 'a') as f:
-            f.write(ligne)
+        if self.log_visible:
+            with open("monitoring.log", 'a') as f:
+                f.write(ligne)
 
         print(ligne)
 
-        self.fenetre.after(2000, self.rafraichir)
+        self.after_id = None
+        if self.monitoring_actif:
+            self.demarrer_monitoring()
 
 
 if __name__ == "__main__":
