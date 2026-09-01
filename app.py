@@ -61,7 +61,7 @@ class App:
         else:
             self.bouton_log.config(text="Activer le log")
 
-
+#la methode fait trop de chose-responsabilité si il echoue tous s'echoue
     def rafraichir(self):
         # Lire les métriques
         cpu = psutil.cpu_percent(interval=None)
@@ -133,3 +133,13 @@ class App:
 
 if __name__ == "__main__":
     app = App()
+#Métaphore
+#Alire abonne  le journal pour recevoir
+# le journal décide qunad publier
+# si un personne abonne ou desabonne le journal Alire n'est pas affecté
+
+#Journal :System métrique
+#abonné :cpu
+#abonné2 :ram
+#abonné3 :disque
+#info:log 
