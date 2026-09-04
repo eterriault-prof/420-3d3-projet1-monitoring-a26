@@ -9,6 +9,10 @@ class App:
         self.fenetre.title("Monitoring système")
         self.fenetre.resizable(False, False)
 
+        self.fenetre_cpu = tk.toplevel(self.fenetre)
+        self.fenetre_cpu.title = ("monitoring-cpu")
+        self.label_cpu_grand = tk.Label(self.fenetre_cpu, text = "0%", font = ("arial", 12, "bold"))
+                                       
         # --- CPU ---
         self.frame_cpu = tk.LabelFrame(self.fenetre, text="CPU", padx=10, pady=10)
         self.frame_cpu.pack(fill=tk.X, padx=10, pady=5)
@@ -16,6 +20,11 @@ class App:
         self.label_cpu.pack()
         self.canvas_cpu = tk.Canvas(self.frame_cpu, width=300, height=20, bg="white")
         self.canvas_cpu.pack()
+
+        
+        self.label_80_cpu = tk.Label(self.frame_cpu, text = "avertissement 80%!", font=("arial", 12, "bold"))
+        self.label_80_cpu.pack()
+
 
         # --- RAM ---
         self.frame_ram = tk.LabelFrame(self.fenetre, text="RAM", padx=10, pady=10)
@@ -33,8 +42,22 @@ class App:
         self.canvas_disque = tk.Canvas(self.frame_disque, width=300, height=20, bg="white")
         self.canvas_disque.pack()
 
+        self.log_active = True
+        self.bouton_log = tk.Button(self.fenetre, text= "desactiver le log", command= self.toggle_log)
+        self.bouton_log.pack(pady=10)
+
         self.rafraichir()
         self.fenetre.mainloop()
+
+
+
+
+    def toggle_log(self):
+        self.log_active = not self.log_active
+        if self.log_active:
+            self.bouton_log.config(text="desactiver le log")
+        else:
+            self.bouton_log.config(text="activer le log")
 
     def rafraichir(self):
         # Lire les métriques
@@ -86,8 +109,9 @@ class App:
             f"RAM: {ram:.1f}% | "
             f"Disque: {disque:.1f}%\n"
         )
-        with open("monitoring.log", 'a') as f:
-            f.write(ligne)
+        if self.log_active: 
+            with open("monitoring.log", 'a') as f:
+                f.write(ligne)
 
         self.fenetre.after(2000, self.rafraichir)
 
