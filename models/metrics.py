@@ -23,4 +23,4 @@ class MetriquesSysteme(Sujet):
         # À compléter : Retourner un dictionnaire avec cpu, ram, disque
         return {"cpu": self._cpu,
                 "ram": self._ram,
-                "stockage": self._stockage}
+                "disque": self._disque}
