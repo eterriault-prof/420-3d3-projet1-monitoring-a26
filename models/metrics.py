@@ -14,11 +14,11 @@ class MetriquesSysteme(Sujet):
         ram = psutil.virtual_memory().percent
         disque = psutil.disk_usage("/").percent
 
-        self.notifier(cpu, ram, disque)
+        self.notifier()
 
     def get_donnees(self) -> dict:
         return {
-           'cpu':  psutil.cpu_percent()
-           'ram': psutil.virtual_memory().percent
+           'cpu':  psutil.cpu_percent(),
+           'ram': psutil.virtual_memory().percent,
            'disque': psutil.disk_usage("/").percent 
         }
