@@ -9,6 +9,9 @@ class App:
         self.fenetre.title("Monitoring système")
         self.fenetre.resizable(False, False)
 
+        self.fenetre_cpu = tk.Toplevel(self.fenetre)
+        self.fenetre_cpu.title("Monitoring CPU")
+
         # --- CPU ---
         self.frame_cpu = tk.LabelFrame(self.fenetre, text="CPU", padx=10, pady=10)
         self.frame_cpu.pack(fill=tk.X, padx=10, pady=5)
@@ -19,6 +22,9 @@ class App:
 
         self.label_cpu_80 = tk.Label(self.frame_cpu, text="", font=("Arial", 10))
         self.label_cpu_80.pack()
+
+        self.label_cpu_grand = tk.Label(self.fenetre_cpu, text="", font=("Arial", 24, "bold"))
+        self.label_cpu_grand.pack(padx=20, pady=20)
 
         # --- RAM ---
         self.frame_ram = tk.LabelFrame(self.fenetre, text="RAM", padx=10, pady=10)
@@ -36,8 +42,21 @@ class App:
         self.canvas_disque = tk.Canvas(self.frame_disque, width=300, height=20, bg="white")
         self.canvas_disque.pack()
 
+        # --- Bouton log ---
+        self.bouton_log = tk.Button(self.fenetre, text="Désactiver log", command=self.toggle_log)
+        self.bouton_log.pack(pady=10)
+        self.log_active = True
+
         self.rafraichir()
         self.fenetre.mainloop()
+
+    def toggle_log(self):
+        self.log_active = not self.log_active
+
+        if self.log_active:
+            self.bouton_log.config(text="Désactiver log")
+        else:
+            self.bouton_log.config(text="Activer log")
 
     def rafraichir(self):
         # Lire les métriques
@@ -48,6 +67,7 @@ class App:
         # Mettre à jour CPU
         self.label_cpu.config(text=f"{cpu:.1f}%")
         self.canvas_cpu.delete("all")
+
         largeur_cpu = int(300 * cpu / 100)
         if cpu < 50:
             couleur_cpu = "green"
@@ -55,11 +75,14 @@ class App:
             couleur_cpu = "orange"
         else:
             couleur_cpu = "red"
+        self.canvas_cpu.create_rectangle(0, 0, largeur_cpu, 20, fill=couleur_cpu, outline="")
 
         if cpu >= 80:
             self.label_cpu_80.config(text="⚠️ Attention : CPU > 80%")
         else:
             self.label_cpu_80.config(text="")
+
+        self.label_cpu_grand.config(text=f"{cpu:.1f}%")
 
         # Mettre à jour RAM
         self.label_ram.config(text=f"{ram:.1f}%")
@@ -93,11 +116,13 @@ class App:
             f"RAM: {ram:.1f}% | "
             f"Disque: {disque:.1f}%\n"
         )
-        with open("monitoring.log", 'a') as f:
-            f.write(ligne)
 
+        if self.log_active:
+            with open("monitoring.log", 'a') as f:
+                    f.write(ligne)
 
-        print(ligne.strip())
+        print(ligne)  # Afficher dans la console
+        
         self.fenetre.after(2000, self.rafraichir)
 
 
