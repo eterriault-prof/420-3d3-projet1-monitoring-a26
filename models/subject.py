@@ -14,7 +14,7 @@ class Sujet(ABC):
     def notifier(self) -> None:
         # À compléter — quelle méthode appelle-t-on sur chaque observateur ?
         for observateur in self._observateurs:
-            observateur.actualiser()
+            observateur.actualiser(self)
 
     @abstractmethod
     def get_donnees(self) -> dict:
