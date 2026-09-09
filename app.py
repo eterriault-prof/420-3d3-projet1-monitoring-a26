@@ -74,6 +74,8 @@ class App:
             couleur_cpu = "orange"
         else:
             couleur_cpu = "red"
+        self.canvas_cpu.create_rectangle(0, 0, largeur_cpu, 20, fill=couleur_cpu, outline="")
+
 
         if cpu >= 80:
             self.label_cpu_80.config(text="⚠️ Attention : CPU > 80%")
