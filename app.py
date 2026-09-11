@@ -11,6 +11,10 @@ class App:
 
         self.fenetre_cpu = tk.Toplevel(self.fenetre)
         self.fenetre_cpu.title("Monitoring CPU")
+        self.label_cpu_grand = tk.Label(self.fenetre_cpu, text="0%", font=("Arial", 72, "bold"))
+        self.label_cpu_grand.pack(padx=20, pady=20)
+
+
 
         # --- CPU ---
         self.frame_cpu = tk.LabelFrame(self.fenetre, text="CPU", padx=10, pady=10)
@@ -20,11 +24,11 @@ class App:
         self.canvas_cpu = tk.Canvas(self.frame_cpu, width=300, height=20, bg="white")
         self.canvas_cpu.pack()
 
-        self.label_cpu_80 = tk.Label(self.frame_cpu, text="", font=("Arial", 10))
-        self.label_cpu_80.pack()
-
-        self.label_cpu_grand = tk.Label(self.fenetre_cpu, text="", font=("Arial", 24, "bold"))
-        self.label_cpu_grand.pack(padx=20, pady=20)
+        self.label_80_cpu = tk.Label(self.frame_cpu, text="Avertissement 80 %!", fg="red", font=("Arial", 12, "bold"))
+        self.label_80_cpu.pack()
+        #self.var_80_=tk.StringVar(value="80")
+        #self.label_80_ = tk.Label(self.frame_cpu, textvariable=self.var_80_, fg="red", font=("Arial", 12))
+        #self.label_80_.pack()
 
         # --- RAM ---
         self.frame_ram = tk.LabelFrame(self.fenetre, text="RAM", padx=10, pady=10)
@@ -42,22 +46,22 @@ class App:
         self.canvas_disque = tk.Canvas(self.frame_disque, width=300, height=20, bg="white")
         self.canvas_disque.pack()
 
-        # --- Bouton log ---
-        self.bouton_log = tk.Button(self.fenetre, text="Désactiver log", command=self.toggle_log)
-        self.bouton_log.pack(pady=10)
+        #---bouton log---
         self.log_active = True
+        self.bouton_log = tk.Button(self.fenetre, text="Désactiver le log", command=self.toggle_log)
+        self.bouton_log.pack(pady=10)
 
         self.rafraichir()
         self.fenetre.mainloop()
 
     def toggle_log(self):
         self.log_active = not self.log_active
-
         if self.log_active:
-            self.bouton_log.config(text="Désactiver log")
+            self.bouton_log.config(text="Désactiver le log")
         else:
-            self.bouton_log.config(text="Activer log")
+            self.bouton_log.config(text="Activer le log")
 
+#la methode fait trop de chose-responsabilité si il echoue tous s'echoue
     def rafraichir(self):
         # Lire les métriques
         cpu = psutil.cpu_percent(interval=None)
@@ -74,13 +78,16 @@ class App:
             couleur_cpu = "orange"
         else:
             couleur_cpu = "red"
-
+        
         if cpu >= 80:
-            self.label_cpu_80.config(text="⚠️ Attention : CPU > 80%")
+            self.label_80_cpu.config(text="Avertissement 80 % !", fg="red")
         else:
-            self.label_cpu_80.config(text="")
+            self.label_80_cpu.config(text="", fg="black")
 
         self.label_cpu_grand.config(text=f"{cpu:.1f}%")
+            
+
+        self.canvas_cpu.create_rectangle(0, 0, largeur_cpu, 20, fill=couleur_cpu, outline="")
 
         # Mettre à jour RAM
         self.label_ram.config(text=f"{ram:.1f}%")
@@ -114,6 +121,12 @@ class App:
             f"RAM: {ram:.1f}% | "
             f"Disque: {disque:.1f}%\n"
         )
+        if self.log_active:
+            with open("monitoring.log", 'a') as f:
+                f.write(ligne)
+        print(ligne.strip())
+        #ligne
+
 
         if self.log_active:
             with open("monitoring.log", 'a') as f:
@@ -126,3 +139,13 @@ class App:
 
 if __name__ == "__main__":
     app = App()
+#Métaphore
+#Alire abonne  le journal pour recevoir
+# le journal décide qunad publier
+# si un personne abonne ou desabonne le journal Alire n'est pas affecté
+
+#Journal :System métrique
+#abonné :cpu
+#abonné2 :ram
+#abonné3 :disque
+#info:log 
